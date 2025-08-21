@@ -1,6 +1,7 @@
 using MyApiBoilerPlate.API;
 using MyApiBoilerPlate.API.Mapping;
 using MyApiBoilerPlate.Application;
+using MyApiBoilerPlate.Infrastructure;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -9,6 +10,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMappings();
 builder.Services.AddApplication();
 builder.Services.AddAPresentation();
+builder.Services.AddInfrastructure();
 builder.Services.AddExceptionHandling();
 
 builder.Services.AddEndpointsApiExplorer();

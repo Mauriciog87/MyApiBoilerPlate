@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyApiBoilerPlate.Application\MyApiBoilerPlate.Application.csproj" />
+    <ProjectReference Include="..\MyApiBoilerPlate.Infrastructure\MyApiBoilerPlate.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
