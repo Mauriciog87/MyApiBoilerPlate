@@ -294,3 +294,75 @@ BEGIN
     END CATCH
 END;
 GO
+
+CREATE PROCEDURE sp_UpdateUser
+    @UserId INT,
+    @FirstName VARCHAR(100),
+    @LastName VARCHAR(100),
+    @Email VARCHAR(255),
+    @PhoneNumber VARCHAR(20) = NULL,
+    @DateOfBirth DATETIME = NULL,
+    @IsActive BIT = 1
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        DECLARE @Now DATETIME = GETDATE();
+
+        UPDATE [users] 
+        SET 
+            [first_name] = @FirstName,
+            [last_name] = @LastName,
+            [email] = @Email,
+            [phone_number] = @PhoneNumber,
+            [date_of_birth] = @DateOfBirth,
+            [updated_at] = @Now,
+            [is_active] = @IsActive
+        WHERE [user_id] = @UserId;
+        
+        SELECT 
+            [user_id] AS UserId,
+            [id] AS Id,
+            [first_name] AS FirstName,
+            [last_name] AS LastName,
+            [email] AS Email,
+            [phone_number] AS PhoneNumber,
+            [date_of_birth] AS DateOfBirth,
+            [created_at] AS CreatedAt,
+            [updated_at] AS UpdatedAt,
+            [is_active] AS IsActive
+        FROM [users] 
+        WHERE [user_id] = @UserId;
+        
+        COMMIT TRANSACTION;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT 
+            @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE();
+        
+        SELECT 
+            'ERROR' AS Status,
+            @ErrorMessage AS ErrorMessage,
+            @ErrorSeverity AS ErrorSeverity,
+            @ErrorState AS ErrorState,
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_PROCEDURE() AS ErrorProcedure,
+            ERROR_LINE() AS ErrorLine;
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO

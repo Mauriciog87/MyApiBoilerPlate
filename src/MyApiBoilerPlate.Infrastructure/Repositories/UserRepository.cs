@@ -74,7 +74,6 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
         {
             DynamicParameters parameters = new();
             parameters.Add("UserId", user.UserId, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
-            parameters.Add("Id", user.Id, System.Data.DbType.Guid, System.Data.ParameterDirection.Input);
             parameters.Add("FirstName", user.FirstName, System.Data.DbType.String, System.Data.ParameterDirection.Input);
             parameters.Add("LastName", user.LastName, System.Data.DbType.String, System.Data.ParameterDirection.Input);
             parameters.Add("Email", user.Email, System.Data.DbType.String, System.Data.ParameterDirection.Input);

@@ -44,17 +44,9 @@ namespace MyApiBoilerPlate.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Update(int userId, [FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
         {
-            UpdateUserCommand command = new(
-                userId,
-                request.FirstName,
-                request.LastName,
-                request.Email,
-                request.PhoneNumber,
-                request.DateOfBirth,
-                request.IsActive
-            );
+            UpdateUserCommand command = mapper.Map<UpdateUserCommand>(request);
 
             ErrorOr<bool> result = await mediator.Send(command);
 

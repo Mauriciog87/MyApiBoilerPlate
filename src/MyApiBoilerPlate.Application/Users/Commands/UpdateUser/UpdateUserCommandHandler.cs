@@ -13,7 +13,6 @@ namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
     {
         public async ValueTask<ErrorOr<bool>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            // Check if user exists
             User? existingUser = await userRepository.GetUserById(request.UserId, cancellationToken);
             
             if (existingUser is null)
@@ -31,7 +30,6 @@ namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
                 }
             }
 
-            // Map the command to user entity, preserving the existing Id and UserId
             User userToUpdate = mapper.Map<User>(request);
             userToUpdate.Id = existingUser.Id;
             userToUpdate.UserId = existingUser.UserId;
