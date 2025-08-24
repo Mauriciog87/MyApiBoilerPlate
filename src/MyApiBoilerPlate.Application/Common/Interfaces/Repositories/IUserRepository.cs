@@ -7,8 +7,8 @@ namespace MyApiBoilerPlate.Application.Common.Interfaces.Repositories
         Task<User> CreateUser(User user, CancellationToken cancellationToken);
         Task<User?> GetUserById(int userId, CancellationToken cancellationToken);
         Task<IEnumerable<User>> GetAllUsers();
-        Task UpdateUser(User user);
-        Task DeleteUser(int userId);
+        Task UpdateUser(User user, CancellationToken cancellationToken);
+        Task DeleteUser(int userId, CancellationToken cancellationToken);
         Task<User> GetUserByGuid(Guid id);
         Task<User?> GetUserByEmail(string email);
         Task<bool> CheckIfUserExists(string email, CancellationToken cancellationToken);

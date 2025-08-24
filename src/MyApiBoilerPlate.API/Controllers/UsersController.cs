@@ -3,6 +3,8 @@ using MapsterMapper;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using MyApiBoilerPlate.Application.Users.Commands.CreateUser;
+using MyApiBoilerPlate.Application.Users.Commands.DeleteUser;
+using MyApiBoilerPlate.Application.Users.Commands.UpdateUser;
 using MyApiBoilerPlate.Application.Users.Common;
 using MyApiBoilerPlate.Application.Users.Queries.GetUserById;
 using MyApiBoilerPlate.Domain.Entities;
@@ -35,6 +37,40 @@ namespace MyApiBoilerPlate.API.Controllers
             ErrorOr<User> result = await mediator.Send(query);
 
             return result.Match(Ok, Problem);
+        }
+
+        [HttpPut("{userId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Update(int userId, [FromBody] UpdateUserRequest request)
+        {
+            UpdateUserCommand command = new(
+                userId,
+                request.FirstName,
+                request.LastName,
+                request.Email,
+                request.PhoneNumber,
+                request.DateOfBirth,
+                request.IsActive
+            );
+
+            ErrorOr<bool> result = await mediator.Send(command);
+
+            return result.Match(_ => NoContent(), Problem);
+        }
+
+        [HttpDelete("{userId:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(int userId)
+        {
+            DeleteUserCommand command = new(userId);
+            ErrorOr<bool> result = await mediator.Send(command);
+
+            return result.Match(_ => NoContent(), Problem);
         }
     }
 }

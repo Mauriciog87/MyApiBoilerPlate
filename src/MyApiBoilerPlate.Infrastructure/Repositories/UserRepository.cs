@@ -27,9 +27,18 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
             );
         }
 
-        public Task DeleteUser(int userId)
+        public async Task DeleteUser(int userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            DynamicParameters parameters = new();
+            parameters.Add("UserId", userId, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
+
+            using var connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+
+            await connection.ExecuteAsync(
+                "sp_DeleteUser",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
         }
 
         public Task<IEnumerable<User>> GetAllUsers()
@@ -61,9 +70,25 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
             );
         }
 
-        public Task UpdateUser(User user)
+        public async Task UpdateUser(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            DynamicParameters parameters = new();
+            parameters.Add("UserId", user.UserId, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
+            parameters.Add("Id", user.Id, System.Data.DbType.Guid, System.Data.ParameterDirection.Input);
+            parameters.Add("FirstName", user.FirstName, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("LastName", user.LastName, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("Email", user.Email, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("PhoneNumber", user.PhoneNumber, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("DateOfBirth", user.DateOfBirth, System.Data.DbType.Date, System.Data.ParameterDirection.Input);
+            parameters.Add("IsActive", user.IsActive, System.Data.DbType.Boolean, System.Data.ParameterDirection.Input);
+
+            using var connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+
+            await connection.ExecuteAsync(
+                "sp_UpdateUser",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
         }
 
         public async Task<bool> CheckIfUserExists(string email, CancellationToken cancellationToken)

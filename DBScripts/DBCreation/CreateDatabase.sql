@@ -150,8 +150,9 @@ BEGIN
     DECLARE @ErrorState INT;
     
     BEGIN TRY
-         DECLARE @Now DATETIME = GETDATE();
-
+        BEGIN TRANSACTION;
+        
+        DECLARE @Now DATETIME = GETDATE();
 
         INSERT INTO [users] (
             [id],
@@ -192,8 +193,13 @@ BEGIN
         FROM [users] 
         WHERE [user_id] = @InsertedUserId;
         
+        COMMIT TRANSACTION;
+        
     END TRY
     BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
         SELECT 
             @ErrorMessage = ERROR_MESSAGE(),
             @ErrorSeverity = ERROR_SEVERITY(),
@@ -247,3 +253,44 @@ BEGIN
 END;
 GO
 
+CREATE PROCEDURE sp_DeleteUser
+    @UserId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        DELETE FROM [users] 
+        WHERE [user_id] = @UserId;
+        
+        COMMIT TRANSACTION;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT 
+            @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE();
+        
+        SELECT 
+            'ERROR' AS Status,
+            @ErrorMessage AS ErrorMessage,
+            @ErrorSeverity AS ErrorSeverity,
+            @ErrorState AS ErrorState,
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_PROCEDURE() AS ErrorProcedure,
+            ERROR_LINE() AS ErrorLine;
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO
