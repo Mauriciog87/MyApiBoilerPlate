@@ -47,9 +47,18 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<User?> GetUserById(int userId)
+        public async Task<User?> GetUserById(int userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            DynamicParameters parameters = new();
+            parameters.Add("UserId", userId, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
+
+            using var connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+
+            return await connection.QuerySingleOrDefaultAsync<User>(
+                "sp_GetUserById",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
         }
 
         public Task UpdateUser(User user)

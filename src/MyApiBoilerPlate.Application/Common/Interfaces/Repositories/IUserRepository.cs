@@ -5,7 +5,7 @@ namespace MyApiBoilerPlate.Application.Common.Interfaces.Repositories
     public interface IUserRepository
     {
         Task<User> CreateUser(User user, CancellationToken cancellationToken);
-        Task<User> GetUserById(int userId);
+        Task<User?> GetUserById(int userId, CancellationToken cancellationToken);
         Task<IEnumerable<User>> GetAllUsers();
         Task UpdateUser(User user);
         Task DeleteUser(int userId);
