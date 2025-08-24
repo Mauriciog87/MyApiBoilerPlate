@@ -4,6 +4,6 @@ namespace MyApiBoilerPlate.Application.Common.Interfaces.Persistence
 {
     public interface ISqlConnectionFactory
     {
-        SqlConnection CreateConnection();
+        Task<SqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default);
     }
 }

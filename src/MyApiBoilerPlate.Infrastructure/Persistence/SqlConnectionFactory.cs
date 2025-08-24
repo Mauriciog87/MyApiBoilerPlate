@@ -8,11 +8,11 @@ namespace MyApiBoilerPlate.Infrastructure.Persistence
     {
         private readonly IConfiguration _configuration = configuration;
 
-        public SqlConnection CreateConnection()
+        public async Task<SqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
         {
-            var connectionString = _configuration.GetConnectionString("ConnectionString");
-
-            return new SqlConnection(connectionString);
+            var connection = new SqlConnection(_configuration.GetConnectionString("ConnectionString"));
+            await connection.OpenAsync(cancellationToken);
+            return connection;
         }
     }
 }
