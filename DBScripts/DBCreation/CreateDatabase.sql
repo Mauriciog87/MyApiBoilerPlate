@@ -366,3 +366,60 @@ BEGIN
     END CATCH
 END;
 GO
+
+CREATE PROCEDURE sp_GetAllUsersPaginated
+    @PageNumber INT,
+    @PageSize INT,
+    @SortBy NVARCHAR(50) = 'CreatedAt',
+    @SortDescending BIT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+    SELECT COUNT(*) as TotalRecords
+    FROM users;
+    
+    DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
+    DECLARE @OrderClause NVARCHAR(100);
+    
+    IF @SortBy NOT IN ('UserId', 'Id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'CreatedAt', 'UpdatedAt', 'IsActive')
+        SET @SortBy = 'CreatedAt';
+    
+    DECLARE @ColumnName NVARCHAR(50) = 
+        CASE @SortBy
+            WHEN 'UserId' THEN 'user_id'
+            WHEN 'Id' THEN 'id'
+            WHEN 'FirstName' THEN 'first_name'
+            WHEN 'LastName' THEN 'last_name'
+            WHEN 'Email' THEN 'email'
+            WHEN 'PhoneNumber' THEN 'phone_number'
+            WHEN 'DateOfBirth' THEN 'date_of_birth'
+            WHEN 'CreatedAt' THEN 'created_at'
+            WHEN 'UpdatedAt' THEN 'updated_at'
+            WHEN 'IsActive' THEN 'is_active'
+            ELSE 'created_at'
+        END;
+    
+    SET @OrderClause = @ColumnName + CASE WHEN @SortDescending = 1 THEN ' DESC' ELSE ' ASC' END;
+    
+    DECLARE @SQL NVARCHAR(MAX) = '
+    SELECT [user_id] AS UserId
+          ,[id] AS Id
+          ,[first_name] AS FirstName
+          ,[last_name] AS LastName
+          ,[email] AS Email
+          ,[phone_number] AS PhoneNumber
+          ,[date_of_birth] AS DateOfBirth
+          ,[created_at] AS CreatedAt
+          ,[updated_at] AS UpdatedAt
+          ,[is_active] AS IsActive
+      FROM users
+      ORDER BY ' + @OrderClause + '
+      OFFSET ' + CAST(@Offset AS NVARCHAR(10)) + ' ROWS
+      FETCH NEXT ' + CAST(@PageSize AS NVARCHAR(10)) + ' ROWS ONLY;';
+      
+    
+    EXEC sp_executesql @SQL;
+
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+END

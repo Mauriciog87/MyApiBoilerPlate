@@ -7,6 +7,7 @@ using MyApiBoilerPlate.Application.Users.Commands.DeleteUser;
 using MyApiBoilerPlate.Application.Users.Commands.UpdateUser;
 using MyApiBoilerPlate.Application.Users.Common;
 using MyApiBoilerPlate.Application.Users.Queries.GetUserById;
+using MyApiBoilerPlate.Application.Users.Queries.GetAllUsers;
 using MyApiBoilerPlate.Domain.Entities;
 using MyApiBoilerPlate.Requests.Users;
 
@@ -34,7 +35,25 @@ namespace MyApiBoilerPlate.API.Controllers
         public async Task<IActionResult> GetById(int userId)
         {
             GetUserByIdQuery query = new(userId);
+            // TODO: User is domain we need to map to UserResponse or UserDto
             ErrorOr<User> result = await mediator.Send(query);
+
+            return result.Match(Ok, Problem);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? sortBy = "",
+            [FromQuery] bool sortDescending = false
+        )
+        {
+            GetAllUsersQuery query = new(page, pageSize, sortBy, sortDescending);
+            // TODO: User is domain we need to map to UserResponse or UserDto
+            ErrorOr<Result<IEnumerable<User>>> result = await mediator.Send(query);
 
             return result.Match(Ok, Problem);
         }

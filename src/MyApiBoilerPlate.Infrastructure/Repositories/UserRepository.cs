@@ -41,9 +41,32 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
             );
         }
 
-        public Task<IEnumerable<User>> GetAllUsers()
+        public async Task<Result<IEnumerable<User>>> GetAllUsers(
+            int pageNumber,
+            int pageSize,
+            string? sortyBy,
+            bool sortDescending,
+            CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            DynamicParameters parameters = new();
+            parameters.Add("PageNumber", pageNumber, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
+            parameters.Add("PageSize", pageSize, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
+            parameters.Add("SortBy", sortyBy, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("SortDescending", sortDescending, System.Data.DbType.Boolean, System.Data.ParameterDirection.Input);
+
+            using var connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+
+            SqlMapper.GridReader query = await connection.QueryMultipleAsync(
+                "sp_GetAllUsersPaginated",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
+
+            int totalRecords = await query.ReadFirstOrDefaultAsync<int>();
+
+            IEnumerable<User> users = await query.ReadAsync<User>();
+
+            return new Result<IEnumerable<User>>(users, pageSize, pageNumber, totalRecords, sortDescending, sortyBy);
         }
 
         public Task<User?> GetUserByEmail(string email)

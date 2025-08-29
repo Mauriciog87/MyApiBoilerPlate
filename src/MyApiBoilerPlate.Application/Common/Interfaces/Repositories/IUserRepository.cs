@@ -6,7 +6,7 @@ namespace MyApiBoilerPlate.Application.Common.Interfaces.Repositories
     {
         Task<User> CreateUser(User user, CancellationToken cancellationToken);
         Task<User?> GetUserById(int userId, CancellationToken cancellationToken);
-        Task<IEnumerable<User>> GetAllUsers();
+        Task<Result<IEnumerable<User>>> GetAllUsers(int page, int pageSize, string? sortyBy, bool sortDescending, CancellationToken cancellationToken);
         Task UpdateUser(User user, CancellationToken cancellationToken);
         Task DeleteUser(int userId, CancellationToken cancellationToken);
         Task<User> GetUserByGuid(Guid id);
