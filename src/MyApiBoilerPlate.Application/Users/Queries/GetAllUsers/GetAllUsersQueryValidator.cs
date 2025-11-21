@@ -1,4 +1,5 @@
 using FluentValidation;
+using MyApiBoilerPlate.Application.Common.Constants;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
@@ -7,11 +8,14 @@ namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
         public GetAllUsersQueryValidator()
         {
             RuleFor(x => x.Page)
-                .GreaterThan(0).WithMessage("Page must be greater than 0.");
+                .GreaterThanOrEqualTo(PaginationConstants.DefaultPageNumber)
+                .WithMessage($"Page must be greater than or equal to {PaginationConstants.DefaultPageNumber}.");
 
             RuleFor(x => x.PageSize)
-                .GreaterThan(0).WithMessage("Page size must be greater than 0.")
-                .LessThanOrEqualTo(100).WithMessage("Page size cannot exceed 100.");
+                .GreaterThanOrEqualTo(PaginationConstants.MinPageSize)
+                .WithMessage($"Page size must be greater than or equal to {PaginationConstants.MinPageSize}.")
+                .LessThanOrEqualTo(PaginationConstants.MaxPageSize)
+                .WithMessage($"Page size cannot exceed {PaginationConstants.MaxPageSize}.");
         }
     }
 }

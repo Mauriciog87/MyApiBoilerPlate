@@ -2,8 +2,6 @@
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using MyApiBoilerPlate.Application.Common.Behaviors;
-using MyApiBoilerPlate.Application.Dummy.Queries.Test;
-using MyApiBoilerPlate.Application.Users.Commands.CreateUser;
 using System.Reflection;
 
 namespace MyApiBoilerPlate.Application
@@ -12,13 +10,14 @@ namespace MyApiBoilerPlate.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            _ = services.AddMediator((MediatorOptions options) =>
+            services.AddMediator(options =>
             {
                 options.ServiceLifetime = ServiceLifetime.Scoped;
             });
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
             return services;
         }
     }

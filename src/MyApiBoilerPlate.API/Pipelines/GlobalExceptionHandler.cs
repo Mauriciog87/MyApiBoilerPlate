@@ -29,7 +29,7 @@ namespace MyApiBoilerPlate.API.Pipeline
                 ProblemDetails = new ProblemDetails
                 {
                     Type = exception.GetType().Name,
-                    Title = "An error occured",
+                    Title = "An error occurred",
                     Detail = exception.Message
                 }
             });

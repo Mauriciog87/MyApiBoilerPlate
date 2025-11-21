@@ -1,6 +1,7 @@
 using ErrorOr;
 using Mediator;
-using MyApiBoilerPlate.Domain.Entities;
+using MyApiBoilerPlate.Application.Common.Models;
+using MyApiBoilerPlate.Application.Users.Common;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
@@ -8,5 +9,5 @@ namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
         int Page,
         int PageSize,
         string? SortBy,
-        bool SortDescending) : IRequest<ErrorOr<Result<IEnumerable<User>>>>;
+        bool SortDescending) : IRequest<ErrorOr<PagedResult<UserResponse>>>;
 }

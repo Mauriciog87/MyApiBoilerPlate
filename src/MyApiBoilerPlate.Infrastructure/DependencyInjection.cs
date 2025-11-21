@@ -13,6 +13,7 @@ namespace MyApiBoilerPlate.Infrastructure
             services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
             services.AddScoped<IDummyRepository, DummyRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
             return services;
         }
     }

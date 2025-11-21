@@ -9,12 +9,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMappings();
 builder.Services.AddApplication();
-builder.Services.AddAPresentation();
+builder.Services.AddPresentation();
 builder.Services.AddInfrastructure();
 builder.Services.AddExceptionHandling();
 
 builder.Services.AddEndpointsApiExplorer();
-
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

@@ -11,7 +11,7 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
 {
     private readonly IValidator<TRequest>? _validator;
 
-    public ValidationBehavior(IValidator<TRequest>? validator)
+    public ValidationBehavior(IValidator<TRequest>? validator = null)
     {
         _validator = validator;
     }
@@ -30,12 +30,7 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         if (validationResult.IsValid)
             return await next(message, cancellationToken);
 
-        if (validationResult.Errors.Any())
-        {
-            throw new ValidationException(validationResult.Errors);
-        }
-
-        return await next(message, cancellationToken);
+        throw new ValidationException(validationResult.Errors);
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MyApiBoilerPlate.Application.Common.Interfaces.Persistence;
 using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
+using MyApiBoilerPlate.Application.Common.Models;
 using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Infrastructure.Repositories
@@ -41,17 +42,17 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
             );
         }
 
-        public async Task<Result<IEnumerable<User>>> GetAllUsers(
+        public async Task<PagedResult<User>> GetAllUsers(
             int pageNumber,
             int pageSize,
-            string? sortyBy,
+            string? sortBy,
             bool sortDescending,
             CancellationToken cancellationToken)
         {
             DynamicParameters parameters = new();
             parameters.Add("PageNumber", pageNumber, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
             parameters.Add("PageSize", pageSize, System.Data.DbType.Int32, System.Data.ParameterDirection.Input);
-            parameters.Add("SortBy", sortyBy, System.Data.DbType.String, System.Data.ParameterDirection.Input);
+            parameters.Add("SortBy", sortBy, System.Data.DbType.String, System.Data.ParameterDirection.Input);
             parameters.Add("SortDescending", sortDescending, System.Data.DbType.Boolean, System.Data.ParameterDirection.Input);
 
             using var connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
@@ -66,17 +67,7 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
 
             IEnumerable<User> users = await query.ReadAsync<User>();
 
-            return new Result<IEnumerable<User>>(users, pageSize, pageNumber, totalRecords, sortDescending, sortyBy);
-        }
-
-        public Task<User?> GetUserByEmail(string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetUserByGuid(Guid id)
-        {
-            throw new NotImplementedException();
+            return new PagedResult<User>(users, pageSize, pageNumber, totalRecords, sortDescending, sortBy);
         }
 
         public async Task<User?> GetUserById(int userId, CancellationToken cancellationToken)

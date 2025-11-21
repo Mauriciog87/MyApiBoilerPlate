@@ -4,46 +4,46 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MyApiBoilerPlate.API.Controllers
 {
-    [ApiController]
-    public class ApiController : ControllerBase
+  [ApiController]
+  public class ApiController : ControllerBase
+  {
+    protected IActionResult Problem(List<Error> errors)
     {
-        protected IActionResult Problem(List<Error> errors)
-        {
-            if (errors.Count is 0)
-                return Problem();
+      if (errors.Count is 0)
+        return Problem();
 
-            if (errors.All(error => error.Type == ErrorType.Validation))
-                return ValidationProblem(errors);
+      if (errors.All(error => error.Type == ErrorType.Validation))
+        return ValidationProblem(errors);
 
-            HttpContext.Items["errors"] = errors;
-            var firstError = errors[0];
+      HttpContext.Items["errors"] = errors;
+      var firstError = errors[0];
 
-            return Problem(firstError);
-        }
-
-        private IActionResult Problem(Error error)
-        {
-            var statusCode = error.Type switch
-            {
-                ErrorType.Conflict => StatusCodes.Status409Conflict,
-                ErrorType.Validation => StatusCodes.Status400BadRequest,
-                ErrorType.NotFound => StatusCodes.Status404NotFound,
-                _ => StatusCodes.Status500InternalServerError
-            };
-
-            return Problem(statusCode: statusCode, title: error.Description);
-        }
-
-        private IActionResult ValidationProblem(List<Error> errors)
-        {
-            var modelStateDictonary = new ModelStateDictionary();
-
-            foreach (var error in errors)
-            {
-                modelStateDictonary.AddModelError(error.Code, error.Description);
-            }
-
-            return ValidationProblem(modelStateDictonary);
-        }
+      return Problem(firstError);
     }
+
+    private IActionResult Problem(Error error)
+    {
+      var statusCode = error.Type switch
+      {
+        ErrorType.Conflict => StatusCodes.Status409Conflict,
+        ErrorType.Validation => StatusCodes.Status400BadRequest,
+        ErrorType.NotFound => StatusCodes.Status404NotFound,
+        _ => StatusCodes.Status500InternalServerError
+      };
+
+      return Problem(statusCode: statusCode, title: error.Description);
+    }
+
+    private IActionResult ValidationProblem(List<Error> errors)
+    {
+      var modelStateDictionary = new ModelStateDictionary();
+
+      foreach (var error in errors)
+      {
+        modelStateDictionary.AddModelError(error.Code, error.Description);
+      }
+
+      return ValidationProblem(modelStateDictionary);
+    }
+  }
 }
