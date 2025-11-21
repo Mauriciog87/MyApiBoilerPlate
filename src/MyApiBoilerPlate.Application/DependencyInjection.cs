@@ -6,19 +6,19 @@ using System.Reflection;
 
 namespace MyApiBoilerPlate.Application
 {
-    public static class DependencyInjection
+  public static class DependencyInjection
+  {
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
-        {
-            services.AddMediator(options =>
-            {
-                options.ServiceLifetime = ServiceLifetime.Scoped;
-            });
+      services.AddMediator(options =>
+      {
+        options.ServiceLifetime = ServiceLifetime.Scoped;
+      });
 
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+      services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+      services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            return services;
-        }
+      return services;
     }
+  }
 }

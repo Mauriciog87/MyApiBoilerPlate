@@ -13,73 +13,73 @@ using MyApiBoilerPlate.Requests.Users;
 
 namespace MyApiBoilerPlate.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController(IMediator mediator, IMapper mapper) : ApiController
+  [Route("api/[controller]")]
+  [ApiController]
+  public class UsersController(IMediator mediator, IMapper mapper) : ApiController
+  {
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
     {
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
-        {
-            CreateUserCommand command = mapper.Map<CreateUserCommand>(request);
-            ErrorOr<UserCreatedResult> result = await mediator.Send(command);
+      CreateUserCommand command = mapper.Map<CreateUserCommand>(request);
+      ErrorOr<UserCreatedResult> result = await mediator.Send(command);
 
-            return result.Match(Ok, Problem);
-        }
-
-        [HttpGet("{userId:int}")]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetById(int userId)
-        {
-            GetUserByIdQuery query = new(userId);
-            ErrorOr<UserResponse> result = await mediator.Send(query);
-
-            return result.Match(Ok, Problem);
-        }
-
-        [HttpGet]
-        [ProducesResponseType(typeof(PagedResult<UserResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? sortBy = null,
-            [FromQuery] bool sortDescending = false
-        )
-        {
-            GetAllUsersQuery query = new(page, pageSize, sortBy, sortDescending);
-            ErrorOr<PagedResult<UserResponse>> result = await mediator.Send(query);
-
-            return result.Match(Ok, Problem);
-        }
-
-        [HttpPut("{userId:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
-        {
-            UpdateUserCommand command = mapper.Map<UpdateUserCommand>(request);
-
-            ErrorOr<bool> result = await mediator.Send(command);
-
-            return result.Match(_ => NoContent(), Problem);
-        }
-
-        [HttpDelete("{userId:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete(int userId)
-        {
-            DeleteUserCommand command = new(userId);
-            ErrorOr<bool> result = await mediator.Send(command);
-
-            return result.Match(_ => NoContent(), Problem);
-        }
+      return result.Match(Ok, Problem);
     }
+
+    [HttpGet("{userId:int}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetById(int userId)
+    {
+      GetUserByIdQuery query = new(userId);
+      ErrorOr<UserResponse> result = await mediator.Send(query);
+
+      return result.Match(Ok, Problem);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResult<UserResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = false
+    )
+    {
+      GetAllUsersQuery query = new(page, pageSize, sortBy, sortDescending);
+      ErrorOr<PagedResult<UserResponse>> result = await mediator.Send(query);
+
+      return result.Match(Ok, Problem);
+    }
+
+    [HttpPut("{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Update([FromBody] UpdateUserRequest request)
+    {
+      UpdateUserCommand command = mapper.Map<UpdateUserCommand>(request);
+
+      ErrorOr<bool> result = await mediator.Send(command);
+
+      return result.Match(_ => NoContent(), Problem);
+    }
+
+    [HttpDelete("{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Delete(int userId)
+    {
+      DeleteUserCommand command = new(userId);
+      ErrorOr<bool> result = await mediator.Send(command);
+
+      return result.Match(_ => NoContent(), Problem);
+    }
+  }
 }

@@ -21,9 +21,9 @@ namespace MyApiBoilerPlate.API.Controllers
       return Problem(firstError);
     }
 
-    private IActionResult Problem(Error error)
+    private ObjectResult Problem(Error error)
     {
-      var statusCode = error.Type switch
+      int statusCode = error.Type switch
       {
         ErrorType.Conflict => StatusCodes.Status409Conflict,
         ErrorType.Validation => StatusCodes.Status400BadRequest,
@@ -34,16 +34,16 @@ namespace MyApiBoilerPlate.API.Controllers
       return Problem(statusCode: statusCode, title: error.Description);
     }
 
-    private IActionResult ValidationProblem(List<Error> errors)
+    private ActionResult ValidationProblem(List<Error> errors)
     {
-      var modelStateDictionary = new ModelStateDictionary();
+      ModelStateDictionary modelStateDictonary = new();
 
-      foreach (var error in errors)
+      foreach (Error error in errors)
       {
-        modelStateDictionary.AddModelError(error.Code, error.Description);
+        modelStateDictonary.AddModelError(error.Code, error.Description);
       }
 
-      return ValidationProblem(modelStateDictionary);
+      return ValidationProblem(modelStateDictonary);
     }
   }
 }

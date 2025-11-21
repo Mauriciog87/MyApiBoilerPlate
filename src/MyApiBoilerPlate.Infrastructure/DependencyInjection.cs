@@ -6,15 +6,15 @@ using MyApiBoilerPlate.Infrastructure.Repositories;
 
 namespace MyApiBoilerPlate.Infrastructure
 {
-    public static class DependencyInjection
+  public static class DependencyInjection
+  {
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-        {
-            services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
-            services.AddScoped<IDummyRepository, DummyRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+      services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
+      services.AddScoped<IDummyRepository, DummyRepository>();
+      services.AddScoped<IUserRepository, UserRepository>();
 
-            return services;
-        }
+      return services;
     }
+  }
 }
