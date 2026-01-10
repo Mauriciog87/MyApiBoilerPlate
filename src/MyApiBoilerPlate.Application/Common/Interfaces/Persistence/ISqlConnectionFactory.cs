@@ -1,9 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace MyApiBoilerPlate.Application.Common.Interfaces.Persistence
+﻿namespace MyApiBoilerPlate.Application.Common.Interfaces.Persistence
 {
     public interface ISqlConnectionFactory
     {
-        Task<SqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default);
+        Task<System.Data.IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default);
     }
 }

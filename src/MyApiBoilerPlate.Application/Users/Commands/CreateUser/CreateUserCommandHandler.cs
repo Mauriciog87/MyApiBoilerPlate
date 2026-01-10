@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using MapsterMapper;
 using Mediator;
 using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
 using MyApiBoilerPlate.Application.Users.Common;
@@ -7,8 +6,7 @@ using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.CreateUser
 {
-  public class CreateUserCommandHandler(
-      IMapper mapper,
+  public sealed class CreateUserCommandHandler(
       IUserRepository userRepository
   ) : IRequestHandler<CreateUserCommand, ErrorOr<UserCreatedResult>>
   {
@@ -21,7 +19,15 @@ namespace MyApiBoilerPlate.Application.Users.Commands.CreateUser
         return Application.Common.Errors.Errors.User.AlreadyExists;
       }
 
-      User user = mapper.Map<User>(request);
+      // Create user using domain constructor
+      User user = new User(
+        request.FirstName,
+        request.LastName,
+        request.Email,
+        request.PhoneNumber,
+        request.DateOfBirth
+      );
+
       User createdUser = await userRepository.CreateUser(user, cancellationToken);
 
       return new UserCreatedResult(createdUser.UserId, createdUser.Id, createdUser.Email);

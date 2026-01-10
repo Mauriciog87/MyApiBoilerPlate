@@ -3,19 +3,24 @@ using MyApiBoilerPlate.Application.Common.Constants;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
-    public class GetAllUsersQueryValidator : AbstractValidator<GetAllUsersQuery>
+  public class GetAllUsersQueryValidator : AbstractValidator<GetAllUsersQuery>
+  {
+    public GetAllUsersQueryValidator()
     {
-        public GetAllUsersQueryValidator()
-        {
-            RuleFor(x => x.Page)
-                .GreaterThanOrEqualTo(PaginationConstants.DefaultPageNumber)
-                .WithMessage($"Page must be greater than or equal to {PaginationConstants.DefaultPageNumber}.");
+      RuleFor(x => x.Page)
+          .GreaterThanOrEqualTo(PaginationConstants.MinPageNumber)
+          .WithMessage($"Page number must be at least {PaginationConstants.MinPageNumber}.");
 
-            RuleFor(x => x.PageSize)
-                .GreaterThanOrEqualTo(PaginationConstants.MinPageSize)
-                .WithMessage($"Page size must be greater than or equal to {PaginationConstants.MinPageSize}.")
-                .LessThanOrEqualTo(PaginationConstants.MaxPageSize)
-                .WithMessage($"Page size cannot exceed {PaginationConstants.MaxPageSize}.");
-        }
+      RuleFor(x => x.PageSize)
+          .GreaterThanOrEqualTo(PaginationConstants.MinPageSize)
+          .WithMessage($"Page size must be at least {PaginationConstants.MinPageSize}.")
+          .LessThanOrEqualTo(PaginationConstants.MaxPageSize)
+          .WithMessage($"Page size must not exceed {PaginationConstants.MaxPageSize}.");
+
+      RuleFor(x => x.SortBy)
+          .MaximumLength(PaginationConstants.SortByMaxLength)
+          .WithMessage($"Sort field name must not exceed {PaginationConstants.SortByMaxLength} characters.")
+          .When(x => !string.IsNullOrEmpty(x.SortBy));
     }
+  }
 }

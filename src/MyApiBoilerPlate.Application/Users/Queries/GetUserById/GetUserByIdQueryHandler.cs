@@ -7,7 +7,7 @@ using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetUserById
 {
-    public class GetUserByIdQueryHandler(IUserRepository userRepository, IMapper mapper) 
+    public sealed class GetUserByIdQueryHandler(IUserRepository userRepository, IMapper mapper)
         : IRequestHandler<GetUserByIdQuery, ErrorOr<UserResponse>>
     {
         public async ValueTask<ErrorOr<UserResponse>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)

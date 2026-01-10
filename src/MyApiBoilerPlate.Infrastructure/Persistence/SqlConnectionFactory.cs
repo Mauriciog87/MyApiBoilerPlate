@@ -8,7 +8,7 @@ namespace MyApiBoilerPlate.Infrastructure.Persistence
   {
     private readonly IConfiguration _configuration = configuration;
 
-    public async Task<SqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
+    public async Task<System.Data.IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
     {
       var connection = new SqlConnection(_configuration.GetConnectionString("ConnectionString"));
       await connection.OpenAsync(cancellationToken);

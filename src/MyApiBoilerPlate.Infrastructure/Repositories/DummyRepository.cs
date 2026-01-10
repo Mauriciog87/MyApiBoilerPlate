@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
 using MyApiBoilerPlate.Application.Common.Interfaces.Persistence;
 using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
 using System.Data;
@@ -13,7 +12,7 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
       DynamicParameters parameters = new();
       parameters.Add("Data", data, DbType.String, ParameterDirection.Input);
 
-      using SqlConnection connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+      using System.Data.IDbConnection connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
 
       _ = await connection.ExecuteAsync(
           "AddDummyData",

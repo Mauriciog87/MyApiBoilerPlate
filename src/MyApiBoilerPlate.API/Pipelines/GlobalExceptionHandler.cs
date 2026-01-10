@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyApiBoilerPlate.API.Pipeline;
+namespace MyApiBoilerPlate.API.Pipelines;
 
 internal sealed partial class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger,
@@ -35,15 +35,15 @@ internal sealed partial class GlobalExceptionHandler(
       return false;
     }
 
-    (int statusCode, string title) = MapExceptionToResponse(exception);
+    (int statusCode, string title, string typeUri) = MapExceptionToResponse(exception);
 
     httpContext.Response.StatusCode = statusCode;
     httpContext.Response.ContentType = "application/problem+json";
 
     var problemDetails = CreateProblemDetails(
-        exception,
         statusCode,
         title,
+        typeUri,
         httpContext);
 
     await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
@@ -52,18 +52,18 @@ internal sealed partial class GlobalExceptionHandler(
   }
 
   private ProblemDetails CreateProblemDetails(
-      Exception exception,
       int statusCode,
       string title,
+      string typeUri,
       HttpContext httpContext)
   {
     return new ProblemDetails
     {
       Status = statusCode,
-      Type = exception.GetType().Name,
+      Type = typeUri,
       Title = title,
       Detail = environment.IsDevelopment()
-            ? exception.Message
+            ? "See logs for details."
             : "An error occurred processing your request.",
       Instance = httpContext.Request.Path,
       Extensions = new Dictionary<string, object?>
@@ -74,18 +74,18 @@ internal sealed partial class GlobalExceptionHandler(
     };
   }
 
-  private static (int StatusCode, string Title) MapExceptionToResponse(Exception exception)
+  private static (int StatusCode, string Title, string TypeUri) MapExceptionToResponse(Exception exception)
   {
     return exception switch
     {
-      ArgumentNullException => (StatusCodes.Status400BadRequest, "Bad Request"),
-      ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
-      InvalidOperationException => (StatusCodes.Status409Conflict, "Conflict"),
-      UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
-      NotImplementedException => (StatusCodes.Status501NotImplemented, "Not Implemented"),
-      TimeoutException => (StatusCodes.Status408RequestTimeout, "Request Timeout"),
-      KeyNotFoundException => (StatusCodes.Status404NotFound, "Not Found"),
-      _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
+      ArgumentNullException => (StatusCodes.Status400BadRequest, "Bad Request", "https://tools.ietf.org/html/rfc7231#section-6.5.1"),
+      ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request", "https://tools.ietf.org/html/rfc7231#section-6.5.1"),
+      InvalidOperationException => (StatusCodes.Status409Conflict, "Conflict", "https://tools.ietf.org/html/rfc7231#section-6.5.8"),
+      UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized", "https://tools.ietf.org/html/rfc7235#section-3.1"),
+      NotImplementedException => (StatusCodes.Status501NotImplemented, "Not Implemented", "https://tools.ietf.org/html/rfc7231#section-6.6.2"),
+      TimeoutException => (StatusCodes.Status408RequestTimeout, "Request Timeout", "https://tools.ietf.org/html/rfc7231#section-6.5.7"),
+      KeyNotFoundException => (StatusCodes.Status404NotFound, "Not Found", "https://tools.ietf.org/html/rfc7231#section-6.5.4"),
+      _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "https://tools.ietf.org/html/rfc7231#section-6.6.1")
     };
   }
 }

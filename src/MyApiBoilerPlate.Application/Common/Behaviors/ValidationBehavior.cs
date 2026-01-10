@@ -30,10 +30,12 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         if (validationResult.IsValid)
             return await next(message, cancellationToken);
 
-        throw new ValidationException(validationResult.Errors);
+        List<ErrorOr.Error> errors = validationResult.Errors
+            .ConvertAll(error => ErrorOr.Error.Validation(
+                code: error.ErrorCode,
+                description: error.ErrorMessage
+            ));
+
+        return (dynamic)errors;
     }
 }
-
-
-
-

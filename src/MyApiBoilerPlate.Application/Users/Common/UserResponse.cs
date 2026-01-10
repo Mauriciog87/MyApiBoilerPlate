@@ -9,6 +9,6 @@ public sealed record UserResponse(
     string PhoneNumber,
     DateTime DateOfBirth,
     bool IsActive,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt
 );

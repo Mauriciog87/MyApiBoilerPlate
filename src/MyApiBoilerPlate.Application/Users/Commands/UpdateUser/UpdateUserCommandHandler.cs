@@ -1,13 +1,11 @@
 using ErrorOr;
-using MapsterMapper;
 using Mediator;
 using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
 using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
 {
-    public class UpdateUserCommandHandler(
-        IMapper mapper,
+    public sealed class UpdateUserCommandHandler(
         IUserRepository userRepository
     ) : IRequestHandler<UpdateUserCommand, ErrorOr<bool>>
     {
@@ -30,11 +28,17 @@ namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
                 }
             }
 
-            User userToUpdate = mapper.Map<User>(request);
-            userToUpdate.Id = existingUser.Id;
-            userToUpdate.UserId = existingUser.UserId;
+            // Update the existing user using domain method
+            existingUser.Update(
+                request.FirstName,
+                request.LastName,
+                request.Email,
+                request.PhoneNumber,
+                request.DateOfBirth,
+                request.IsActive
+            );
 
-            await userRepository.UpdateUser(userToUpdate, cancellationToken);
+            await userRepository.UpdateUser(existingUser, cancellationToken);
             return true;
         }
     }

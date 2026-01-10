@@ -4,7 +4,7 @@ using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
 {
-  public class DeleteUserCommandHandler(IUserRepository userRepository)
+  public sealed class DeleteUserCommandHandler(IUserRepository userRepository)
       : IRequestHandler<DeleteUserCommand, ErrorOr<bool>>
   {
     public async ValueTask<ErrorOr<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)

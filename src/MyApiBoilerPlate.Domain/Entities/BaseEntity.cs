@@ -2,8 +2,8 @@
 {
   public class BaseEntity
   {
-    public Guid Id { get; set; } = Guid.CreateVersion7();
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public Guid Id { get; internal set; } = Guid.CreateVersion7();
+    public DateTimeOffset CreatedAt { get; internal set; }
+    public DateTimeOffset UpdatedAt { get; internal set; }
   }
 }

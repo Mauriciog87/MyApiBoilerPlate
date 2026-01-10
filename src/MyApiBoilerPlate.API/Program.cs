@@ -7,7 +7,6 @@ using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMappings();
 builder.Services.AddApplication();
 builder.Services.AddPresentation();
 builder.Services.AddInfrastructure();
@@ -47,8 +46,6 @@ app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
 
 app.MapControllers();
 

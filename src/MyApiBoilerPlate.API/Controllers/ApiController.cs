@@ -15,7 +15,6 @@ namespace MyApiBoilerPlate.API.Controllers
       if (errors.All(error => error.Type == ErrorType.Validation))
         return ValidationProblem(errors);
 
-      HttpContext.Items["errors"] = errors;
       var firstError = errors[0];
 
       return Problem(firstError);
@@ -36,14 +35,14 @@ namespace MyApiBoilerPlate.API.Controllers
 
     private ActionResult ValidationProblem(List<Error> errors)
     {
-      ModelStateDictionary modelStateDictonary = new();
+      ModelStateDictionary modelStateDictionary = new();
 
       foreach (Error error in errors)
       {
-        modelStateDictonary.AddModelError(error.Code, error.Description);
+        modelStateDictionary.AddModelError(error.Code, error.Description);
       }
 
-      return ValidationProblem(modelStateDictonary);
+      return ValidationProblem(modelStateDictionary);
     }
   }
 }

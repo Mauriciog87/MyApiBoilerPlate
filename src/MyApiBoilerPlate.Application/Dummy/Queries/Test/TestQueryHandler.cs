@@ -3,7 +3,7 @@ using Mediator;
 
 namespace MyApiBoilerPlate.Application.Dummy.Queries.Test
 {
-    public class TestQueryHandler : IRequestHandler<TestQuery, ErrorOr<string>>
+    public sealed class TestQueryHandler : IRequestHandler<TestQuery, ErrorOr<string>>
     {
         public TestQueryHandler()
         {

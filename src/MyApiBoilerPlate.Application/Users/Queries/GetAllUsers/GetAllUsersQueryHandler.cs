@@ -8,7 +8,7 @@ using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
-    public class GetAllUsersQueryHandler(IUserRepository userRepository, IMapper mapper) 
+    public sealed class GetAllUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
         : IRequestHandler<GetAllUsersQuery, ErrorOr<PagedResult<UserResponse>>>
     {
         public async ValueTask<ErrorOr<PagedResult<UserResponse>>> Handle(
