@@ -1,6 +1,6 @@
 ﻿namespace MyApiBoilerPlate.Domain.Entities
 {
-  public class User : BaseEntity
+  public sealed class User : BaseEntity
   {
     public int UserId { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
@@ -20,7 +20,6 @@
       PhoneNumber = phoneNumber;
       DateOfBirth = dateOfBirth;
       IsActive = true;
-      UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public void Update(string firstName, string lastName, string email, string phoneNumber, DateTime dateOfBirth, bool isActive)

@@ -1,6 +1,6 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MyApiBoilerPlate.API.Common;
 
 namespace MyApiBoilerPlate.API.Controllers
 {
@@ -16,32 +16,14 @@ namespace MyApiBoilerPlate.API.Controllers
         return ValidationProblem(errors);
 
       var firstError = errors[0];
+      int statusCode = ErrorMapper.MapErrorToStatusCode(firstError);
 
-      return Problem(firstError);
-    }
-
-    private ObjectResult Problem(Error error)
-    {
-      int statusCode = error.Type switch
-      {
-        ErrorType.Conflict => StatusCodes.Status409Conflict,
-        ErrorType.Validation => StatusCodes.Status400BadRequest,
-        ErrorType.NotFound => StatusCodes.Status404NotFound,
-        _ => StatusCodes.Status500InternalServerError
-      };
-
-      return Problem(statusCode: statusCode, title: error.Description);
+      return Problem(statusCode: statusCode, title: firstError.Description);
     }
 
     private ActionResult ValidationProblem(List<Error> errors)
     {
-      ModelStateDictionary modelStateDictionary = new();
-
-      foreach (Error error in errors)
-      {
-        modelStateDictionary.AddModelError(error.Code, error.Description);
-      }
-
+      var modelStateDictionary = ErrorMapper.CreateModelStateDictionary(errors);
       return ValidationProblem(modelStateDictionary);
     }
   }

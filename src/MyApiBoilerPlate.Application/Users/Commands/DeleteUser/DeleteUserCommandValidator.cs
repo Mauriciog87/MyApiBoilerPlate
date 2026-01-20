@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
 {
-    public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
+    public sealed class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
     {
         public DeleteUserCommandValidator()
         {

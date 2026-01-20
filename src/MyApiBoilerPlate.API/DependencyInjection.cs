@@ -11,7 +11,7 @@ namespace MyApiBoilerPlate.API
       services.AddControllers();
       services.AddMediator(options =>
       {
-        options.ServiceLifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped;
+        options.ServiceLifetime = ServiceLifetime.Scoped;
       });
       services.AddMappings();
 

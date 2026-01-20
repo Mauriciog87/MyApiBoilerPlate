@@ -3,7 +3,7 @@ using MyApiBoilerPlate.Application.Common.Constants;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
-  public class GetAllUsersQueryValidator : AbstractValidator<GetAllUsersQuery>
+  public sealed class GetAllUsersQueryValidator : AbstractValidator<GetAllUsersQuery>
   {
     public GetAllUsersQueryValidator()
     {

@@ -1,11 +1,17 @@
 using MyApiBoilerPlate.API;
-using MyApiBoilerPlate.API.Mapping;
 using MyApiBoilerPlate.Application;
 using MyApiBoilerPlate.Infrastructure;
 using Scalar.AspNetCore;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// Enable DI validation to detect captive dependencies and registration errors at startup
+builder.Host.UseDefaultServiceProvider(options =>
+{
+    options.ValidateScopes = builder.Environment.IsDevelopment();
+    options.ValidateOnBuild = builder.Environment.IsDevelopment();
+});
 
 builder.Services.AddApplication();
 builder.Services.AddPresentation();
