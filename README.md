@@ -67,14 +67,14 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **Automatic response safety checks** (prevents double-write errors)
 
 ### ✅ **Recent Improvements**
-- **Response DTOs** - Domain entities no longer exposed in API
+- **Response DTOs** - Domain entities no longer exposed in API responses
+- **Complete CRUD Operations** - Create, Read, Update, Delete for users
 - **Centralized Constants** - Validation and pagination rules in one place
-- **PagedResult<T>** - Proper pagination model
+- **PagedResult<T>** - Proper pagination model with metadata
 - **High-Performance Logging** - Source Generators for zero-allocation logging
 - **Enhanced Observability** - TraceId, timestamps, and structured error responses
 - **Production Security** - Sensitive error details hidden in production
-- **Bug Fixes** - All typos and naming inconsistencies fixed
-- **Clean Code** - Dead code and unimplemented methods removed
+- **Clean Code** - Follows SOLID principles and best practices
 
 ## 🚀 Quick Start
 
@@ -127,30 +127,62 @@ This solution follows **Clean Architecture** principles with clear separation of
 MyApiBoilerPlate/
 ├── src/
 │   ├── MyApiBoilerPlate.API/
-│   │   ├── Controllers/        # API endpoints
-│   │   ├── Pipelines/         # Exception handlers
-│   │   └── Mapping/           # Mapster configurations
+│   │   ├── Controllers/
+│   │   │   ├── ApiController.cs         # Base controller with error handling
+│   │   │   ├── DummiesController.cs     # Dummy endpoints
+│   │   │   └── UsersController.cs       # User endpoints (CRUD)
+│   │   ├── Pipelines/
+│   │   │   └── GlobalExceptionHandler.cs # Global exception handling
+│   │   ├── Mapping/
+│   │   │   └── UserMappingConfig.cs     # Mapster configurations
+│   │   ├── Common/
+│   │   │   └── ErrorMapper.cs           # Exception to HTTP status mapping
+│   │   └── Properties/
+│   │       └── launchSettings.json      # Environment configuration
 │   ├── MyApiBoilerPlate.Application/
 │   │   ├── Common/
-│   │   │   ├── Behaviors/     # Pipeline behaviors
-│   │   │   ├── Constants/     # Application constants
-│   │   │   ├── Errors/        # Error definitions
-│   │   │   ├── Interfaces/    # Repository interfaces
-│   │   │   └── Models/        # Shared models (PagedResult)
-│   │   └── Users/
-│   │       ├── Commands/      # CQRS Commands
-│   │       ├── Queries/       # CQRS Queries
-│   │       └── Common/        # DTOs (UserResponse)
+│   │   │   ├── Behaviors/               # Pipeline behaviors (validation)
+│   │   │   ├── Constants/               # Validation & pagination constants
+│   │   │   ├── Errors/                  # Error definitions
+│   │   │   ├── Interfaces/              # Repository interfaces
+│   │   │   └── Models/                  # Shared models (PagedResult<T>)
+│   │   ├── Users/
+│   │   │   ├── Commands/
+│   │   │   │   ├── CreateUser/          # Create user command & handler
+│   │   │   │   ├── UpdateUser/          # Update user command & handler
+│   │   │   │   └── DeleteUser/          # Delete user command & handler
+│   │   │   ├── Queries/
+│   │   │   │   ├── GetUserById/         # Get single user query
+│   │   │   │   └── GetAllUsers/         # Get paginated users query
+│   │   │   └── Common/
+│   │   │       ├── UserResponse.cs      # User response DTO
+│   │   │       └── UserCreatedResult.cs # Create response DTO
+│   │   ├── Dummy/
+│   │   │   └── Queries/
+│   │   │       └── Test/                # Dummy test query
+│   │   └── DependencyInjection.cs       # Application layer DI setup
 │   ├── MyApiBoilerPlate.Domain/
-│   │   └── Entities/          # Domain entities
+│   │   ├── Entities/
+│   │   │   ├── BaseEntity.cs            # Base entity with ID
+│   │   │   └── User.cs                  # User domain entity
+│   │   └── MyApiBoilerPlate.Domain.csproj
 │   ├── MyApiBoilerPlate.Infrastructure/
-│   │   ├── Persistence/       # Database connection
-│   │   └── Repositories/      # Repository implementations
-│   └── MyApiBoilerPlate.Requests/
-│       └── Users/             # Request DTOs
-├── MEJORAS_REALIZADAS.md      # Detailed improvements documentation
-├── ANALISIS_ARQUITECTONICO_AVANZADO.md  # Advanced architecture analysis
-└── README.md
+│   │   ├── Persistence/                 # Database connection & context
+│   │   ├── Repositories/                # Repository implementations
+│   │   ├── Extensions/                  # Extension methods
+│   │   ├── DependencyInjection.cs       # Infrastructure layer DI setup
+│   │   └── MyApiBoilerPlate.Infrastructure.csproj
+│   ├── MyApiBoilerPlate.Requests/
+│   │   └── Users/
+│   │       ├── CreateUserRequest.cs     # Create user request DTO
+│   │       └── UpdateUserRequest.cs     # Update user request DTO
+│   └── MyApiBoilerPlate.sln             # Solution file
+├── DBScripts/
+│   └── DBCreation/
+│       └── CreateDatabase.sql           # Database initialization script
+├── LICENSE
+├── README.md
+└── .gitignore
 ```
 
 ## 🎯 Architecture Highlights
@@ -210,33 +242,19 @@ public interface IUserRepository
 Request → ValidationBehavior → Handler → Response
 ```
 
-## 🔐 Validation
+## 🔐 Validation Rules
 
-Validation is handled through **FluentValidation** with centralized constants:
+The following validation rules are centralized in `ValidationConstants`:
 
-```csharp
-// Centralized validation rules
-public static class ValidationConstants
-{
-    public static class User
-    {
-        public const int FirstNameMaxLength = 50;
-        public const int EmailMaxLength = 100;
-        public const string PhoneNumberPattern = @"^\+?[1-9]\d{1,14}$";
-    }
-}
-
-// Validator using constants
-public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
-{
-    public CreateUserCommandValidator()
-    {
-        RuleFor(x => x.Email)
-            .EmailAddress()
-            .MaximumLength(ValidationConstants.User.EmailMaxLength);
-    }
-}
-```
+### User Validation Rules
+| Field | Constraints |
+|-------|------------|
+| **FirstName** | Required, Max 50 characters |
+| **LastName** | Required, Max 50 characters |
+| **Email** | Required, Valid email format, Max 100 characters |
+| **PhoneNumber** | Required, Valid international format (+1-9 digits) |
+| **DateOfBirth** | Required, Valid date in past |
+| **IsActive** | Optional, Boolean |
 
 ## 📊 Pagination
 
@@ -357,6 +375,61 @@ public async Task<ErrorOr<UserResponse>> Handle(GetUserByIdQuery request, ...)
 }
 ```
 
+## 📝 CQRS Commands & Queries
+
+### User Commands
+
+#### CreateUserCommand
+```csharp
+// Creates a new user
+public record CreateUserCommand(
+    string FirstName,
+    string LastName,
+    string Email,
+    string PhoneNumber,
+    DateTime DateOfBirth
+) : IRequest<ErrorOr<UserCreatedResult>>;
+```
+
+#### UpdateUserCommand
+```csharp
+// Updates an existing user
+public record UpdateUserCommand(
+    int UserId,
+    string FirstName,
+    string LastName,
+    string Email,
+    string PhoneNumber,
+    DateTime DateOfBirth,
+    bool IsActive
+) : IRequest<ErrorOr<Success>>;
+```
+
+#### DeleteUserCommand
+```csharp
+// Soft deletes a user
+public record DeleteUserCommand(int UserId) : IRequest<ErrorOr<Success>>;
+```
+
+### User Queries
+
+#### GetUserByIdQuery
+```csharp
+// Retrieves a single user by ID
+public record GetUserByIdQuery(int UserId) : IRequest<ErrorOr<UserResponse>>;
+```
+
+#### GetAllUsersQuery
+```csharp
+// Retrieves all users with pagination and sorting
+public record GetAllUsersQuery(
+    int Page,
+    int PageSize,
+    string? SortBy,
+    bool SortDescending
+) : IRequest<ErrorOr<PagedResult<UserResponse>>>;
+```
+
 ## 📝 API Examples
 
 ### Create User
@@ -430,48 +503,76 @@ dotnet test --filter Category=Integration
 
 **Overall Architecture Score**: **8.3/10** ⭐
 
-## 📚 Documentation
+## 📚 Additional Resources
 
-- **[MEJORAS_REALIZADAS.md](MEJORAS_REALIZADAS.md)** - Detailed list of recent improvements
-- **[ANALISIS_ARQUITECTONICO_AVANZADO.md](ANALISIS_ARQUITECTONICO_AVANZADO.md)** - Advanced architecture analysis and recommendations
+This project implements best practices from:
+- **Clean Architecture** by Robert C. Martin
+- **CQRS Pattern** for command/query separation
+- **RFC 7807** for standardized error responses
+- **.NET 10 & C# 14** latest features and best practices
 
 ## 🚧 Current Project Status
 
-- ✅ Clean Architecture structure
-- ✅ CQRS implementation with Mediator
-- ✅ FluentValidation with centralized constants
-- ✅ Advanced exception handling with Source Generators
-- ✅ Structured logging with Serilog
-- ✅ Response DTOs (domain protection)
-- ✅ Pagination support
-- ✅ OpenAPI documentation
-- ✅ High-performance logging
-- ✅ TraceId correlation
-- ❌ **Unit tests**
-- ❌ **Integration tests**
-- ❌ **Authentication/Authorization**
-- ❌ **Caching**
-- ❌ **Health checks**
+### ✅ Implemented Features
+- ✅ **Clean Architecture** - Properly layered separation of concerns
+- ✅ **CQRS Implementation** - Commands (CreateUser, UpdateUser, DeleteUser) and Queries (GetUserById, GetAllUsers)
+- ✅ **Mediator Pattern** - Request/response handling via MediatR
+- ✅ **FluentValidation** - Comprehensive input validation with centralized constants
+- ✅ **Advanced Exception Handling** - Global exception handler with RFC 7807 Problem Details
+- ✅ **Structured Logging** - Source Generator-based Serilog integration
+- ✅ **Response DTOs** - Domain entities protected from direct API exposure
+- ✅ **Pagination Support** - PagedResult<T> for large datasets
+- ✅ **OpenAPI Documentation** - Swagger UI, Scalar, and ReDoc integration
+- ✅ **High-Performance Logging** - Source Generators for zero-allocation logging
+- ✅ **TraceId Correlation** - Request tracking across all responses
+- ✅ **User Management** - Complete CRUD operations for users
+- ✅ **Repository Pattern** - Data access abstraction with Dapper micro-ORM
+
+### ❌ Not Yet Implemented
+- ❌ **Unit Tests** - Test suite for validators and handlers
+- ❌ **Integration Tests** - API endpoint testing
+- ❌ **Authentication/Authorization** - JWT or OAuth2 support
+- ❌ **Caching** - Response or data caching strategy
+- ❌ **Health Checks** - Application health endpoint
+- ❌ **Specification Pattern** - Business rule aggregation
+- ❌ **Domain Events** - Event-driven architecture support
 
 ## 🔮 Roadmap
 
-### High Priority
-- [ ] Unit tests for validators and handlers
-- [ ] Integration tests for API endpoints
-- [ ] Caching strategy implementation
-- [ ] Specification Pattern for business rules
+### Phase 1: Quality Assurance (High Priority)
+- [ ] Unit tests for all validators
+- [ ] Unit tests for command/query handlers
+- [ ] Integration tests for UsersController endpoints
+- [ ] Integration tests for Dummy endpoints
+- [ ] Code coverage reporting
 
-### Medium Priority
-- [ ] Domain Events
-- [ ] Performance monitoring
-- [ ] Authentication with JWT
-- [ ] Authorization policies
+### Phase 2: Security & Performance (High Priority)
+- [ ] JWT Authentication implementation
+- [ ] Role-based authorization policies
+- [ ] Caching strategy (in-memory and distributed)
+- [ ] Response compression
+- [ ] Rate limiting middleware
 
-### Low Priority
+### Phase 3: Advanced Patterns (Medium Priority)
+- [ ] Specification Pattern for complex queries
+- [ ] Domain Events implementation
+- [ ] Event sourcing foundations
+- [ ] SAGA pattern for distributed transactions
+- [ ] Outbox pattern for event consistency
+
+### Phase 4: Observability & Operations (Medium Priority)
 - [ ] Health checks endpoint
-- [ ] Rate limiting
-- [ ] API versioning
-- [ ] Distributed caching (Redis)
+- [ ] Application insights integration
+- [ ] Performance monitoring
+- [ ] Custom metrics
+- [ ] Distributed tracing enhancements
+
+### Phase 5: Extensibility (Low Priority)
+- [ ] API versioning (v1, v2, etc.)
+- [ ] Soft delete implementation
+- [ ] Audit logging for entity changes
+- [ ] Background job processing (Hangfire)
+- [ ] GraphQL endpoint support
 
 ## 🤝 Contributing
 
@@ -514,4 +615,4 @@ For questions or support, please open an issue in the GitHub repository.
 
 **Built with ❤️ using .NET 10**
 
-*Last updated: January 2025*
+*Last updated: January 20, 2026*
