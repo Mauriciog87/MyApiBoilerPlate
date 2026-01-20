@@ -16,7 +16,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.CreateUser
 
       if (userExists)
       {
-        return Application.Common.Errors.Errors.User.AlreadyExists;
+        return Application.Common.Errors.Errors.User.AlreadyExistsByEmail(request.Email);
       }
 
       // Create user using domain constructor

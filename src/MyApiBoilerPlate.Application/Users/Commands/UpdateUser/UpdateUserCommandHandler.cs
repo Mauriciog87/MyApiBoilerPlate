@@ -15,7 +15,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
             
             if (existingUser is null)
             {
-                return Application.Common.Errors.Errors.User.NotFound;
+                return Application.Common.Errors.Errors.User.NotFoundById(request.UserId);
             }
 
             // Check if email is being changed and if new email already exists
@@ -24,7 +24,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.UpdateUser
                 bool emailExists = await userRepository.CheckIfUserExists(request.Email, cancellationToken);
                 if (emailExists)
                 {
-                    return Application.Common.Errors.Errors.User.AlreadyExists;
+                    return Application.Common.Errors.Errors.User.AlreadyExistsByEmail(request.Email);
                 }
             }
 

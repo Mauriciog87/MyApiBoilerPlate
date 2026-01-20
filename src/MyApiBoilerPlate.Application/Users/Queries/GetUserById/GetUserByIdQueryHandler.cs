@@ -16,7 +16,7 @@ namespace MyApiBoilerPlate.Application.Users.Queries.GetUserById
 
             if (user is null)
             {
-                return Application.Common.Errors.Errors.User.NotFound;
+                return Application.Common.Errors.Errors.User.NotFoundById(request.UserId);
             }
 
             return mapper.Map<UserResponse>(user);

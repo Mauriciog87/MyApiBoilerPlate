@@ -13,7 +13,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
 
       if (existingUser is null)
       {
-        return Application.Common.Errors.Errors.User.NotFound;
+        return Application.Common.Errors.Errors.User.NotFoundById(request.UserId);
       }
 
       await userRepository.DeleteUser(request.UserId, cancellationToken);
