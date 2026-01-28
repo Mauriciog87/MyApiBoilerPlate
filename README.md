@@ -50,6 +50,8 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **Serilog** (v9.0.0) - Structured logging
 - **ErrorOr** (v2.0.1) - Railway-oriented programming
 - **Dapper** (v2.1.66) - High-performance micro ORM for data access
+- **Docker** - Containerization support with multi-stage builds
+- **AspNetCore.HealthChecks** - System health monitoring
 
 ### 📚 **API Documentation**
 - **OpenAPI 3.0** specification
@@ -65,6 +67,11 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **Environment-aware** error details (development vs production)
 - **Validation exception handler** with camelCase field names
 - **Automatic response safety checks** (prevents double-write errors)
+
+### 🐳 **Containerization (New!)**
+- **Docker Support** - Multi-stage, non-root, optimized images
+- **Docker Compose** - One-command orchestration for API + SQL Server
+- **Health Checks** - Integrated liveness/readiness probes
 
 ### ✅ **Recent Improvements**
 - **Response DTOs** - Domain entities no longer exposed in API responses
@@ -114,6 +121,11 @@ This solution follows **Clean Architecture** principles with clear separation of
    ```bash
    cd src/MyApiBoilerPlate.API
    dotnet run
+   ```
+
+   **OR use Docker (Recommended):**
+   ```bash
+   docker-compose up --build
    ```
 
 6. **Access documentation**
@@ -527,13 +539,15 @@ This project implements best practices from:
 - ✅ **TraceId Correlation** - Request tracking across all responses
 - ✅ **User Management** - Complete CRUD operations for users
 - ✅ **Repository Pattern** - Data access abstraction with Dapper micro-ORM
+- ✅ **Health Checks** - Liveness (`/health`) and Readiness (`/health/ready`) endpoints
+- ✅ **Rate Limiting** - Global fixed window policy for API protection
+- ✅ **Docker Support** - Production-ready containerization
 
 ### ❌ Not Yet Implemented
 - ❌ **Unit Tests** - Test suite for validators and handlers
 - ❌ **Integration Tests** - API endpoint testing
 - ❌ **Authentication/Authorization** - JWT or OAuth2 support
 - ❌ **Caching** - Response or data caching strategy
-- ❌ **Health Checks** - Application health endpoint
 - ❌ **Specification Pattern** - Business rule aggregation
 - ❌ **Domain Events** - Event-driven architecture support
 
@@ -551,7 +565,6 @@ This project implements best practices from:
 - [ ] Role-based authorization policies
 - [ ] Caching strategy (in-memory and distributed)
 - [ ] Response compression
-- [ ] Rate limiting middleware
 
 ### Phase 3: Advanced Patterns (Medium Priority)
 - [ ] Specification Pattern for complex queries
@@ -561,7 +574,7 @@ This project implements best practices from:
 - [ ] Outbox pattern for event consistency
 
 ### Phase 4: Observability & Operations (Medium Priority)
-- [ ] Health checks endpoint
+- [ ] Application insights integration
 - [ ] Application insights integration
 - [ ] Performance monitoring
 - [ ] Custom metrics

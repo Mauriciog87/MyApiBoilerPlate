@@ -1,0 +1,40 @@
+# Docker ignore file for .NET project
+
+# IDEs and OS
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.doccache
+.DS_Store
+Thumbs.db
+
+# Build Artifacts
+**/bin/
+**/obj/
+**/publish/
+
+# Local configuration and secrets
+**/*.user
+**/appsettings.Development.json
+**/appsettings.Local.json
+.env
+
+# Git
+.git/
+.gitignore
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# Test results and coverage
+TestResults/
+**/coverage/
+
+# Logs
+logs/
+*.log
