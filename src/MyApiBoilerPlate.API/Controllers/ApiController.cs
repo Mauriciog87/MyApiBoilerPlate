@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MyApiBoilerPlate.API.Common;
 
 namespace MyApiBoilerPlate.API.Controllers
@@ -15,7 +16,7 @@ namespace MyApiBoilerPlate.API.Controllers
       if (errors.All(error => error.Type == ErrorType.Validation))
         return ValidationProblem(errors);
 
-      var firstError = errors[0];
+      Error firstError = errors[0];
       int statusCode = ErrorMapper.MapErrorToStatusCode(firstError);
 
       return Problem(statusCode: statusCode, title: firstError.Description);
@@ -23,7 +24,7 @@ namespace MyApiBoilerPlate.API.Controllers
 
     private ActionResult ValidationProblem(List<Error> errors)
     {
-      var modelStateDictionary = ErrorMapper.CreateModelStateDictionary(errors);
+      ModelStateDictionary modelStateDictionary = ErrorMapper.CreateModelStateDictionary(errors);
       return ValidationProblem(modelStateDictionary);
     }
   }

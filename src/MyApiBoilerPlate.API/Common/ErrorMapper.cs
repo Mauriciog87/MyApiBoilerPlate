@@ -140,7 +140,7 @@ namespace MyApiBoilerPlate.API.Common
     /// </summary>
     public static int MapExceptionToStatusCode(Exception exception)
     {
-      var exceptionType = exception.GetType();
+            Type exceptionType = exception.GetType();
 
       // Check exact type match first
       if (ExceptionTypeToStatusCode.TryGetValue(exceptionType, out int statusCode))
@@ -149,7 +149,7 @@ namespace MyApiBoilerPlate.API.Common
       }
 
       // Check base types
-      foreach (var mapping in ExceptionTypeToStatusCode)
+      foreach (KeyValuePair<Type, int> mapping in ExceptionTypeToStatusCode)
       {
         if (mapping.Key.IsAssignableFrom(exceptionType))
         {
@@ -165,16 +165,16 @@ namespace MyApiBoilerPlate.API.Common
     /// </summary>
     public static (string Title, string TypeUri) MapExceptionToResponse(Exception exception)
     {
-      var exceptionType = exception.GetType();
+            Type exceptionType = exception.GetType();
 
       // Check exact type match first
-      if (ExceptionTypeToResponse.TryGetValue(exceptionType, out var response))
+      if (ExceptionTypeToResponse.TryGetValue(exceptionType, out (string Title, string TypeUri) response))
       {
         return response;
       }
 
       // Check base types
-      foreach (var mapping in ExceptionTypeToResponse)
+      foreach (KeyValuePair<Type, (string Title, string TypeUri)> mapping in ExceptionTypeToResponse)
       {
         if (mapping.Key.IsAssignableFrom(exceptionType))
         {
@@ -190,7 +190,7 @@ namespace MyApiBoilerPlate.API.Common
     /// </summary>
     public static ModelStateDictionary CreateModelStateDictionary(List<Error> errors)
     {
-      var modelStateDictionary = new ModelStateDictionary();
+            ModelStateDictionary modelStateDictionary = new ModelStateDictionary();
 
       foreach (Error error in errors)
       {

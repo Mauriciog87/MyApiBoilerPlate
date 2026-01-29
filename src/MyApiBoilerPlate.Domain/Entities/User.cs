@@ -7,17 +7,19 @@
     public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public string PhoneNumber { get; private set; } = string.Empty;
+    public string PasswordHash { get; private set; } = string.Empty;
     public DateTime DateOfBirth { get; private set; }
     public bool IsActive { get; private set; }
 
     public User() { }
 
-    public User(string firstName, string lastName, string email, string phoneNumber, DateTime dateOfBirth)
+    public User(string firstName, string lastName, string email, string phoneNumber, string passwordHash, DateTime dateOfBirth)
     {
       FirstName = firstName;
       LastName = lastName;
       Email = email;
       PhoneNumber = phoneNumber;
+      PasswordHash = passwordHash;
       DateOfBirth = dateOfBirth;
       IsActive = true;
     }

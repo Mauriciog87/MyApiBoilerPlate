@@ -70,15 +70,7 @@ namespace MyApiBoilerPlate.API.Controllers
         [FromBody] UpdateUserRequest request,
         CancellationToken cancellationToken)
     {
-      UpdateUserCommand command = new(
-          userId,
-          request.FirstName,
-          request.LastName,
-          request.Email,
-          request.PhoneNumber,
-          request.DateOfBirth,
-          request.IsActive
-      );
+      UpdateUserCommand command = mapper.Map<UpdateUserCommand>((request, userId));
 
       ErrorOr<bool> result = await mediator.Send(command, cancellationToken);
 

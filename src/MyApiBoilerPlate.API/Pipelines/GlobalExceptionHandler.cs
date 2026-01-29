@@ -37,16 +37,16 @@ internal sealed partial class GlobalExceptionHandler(
     }
 
     int statusCode = ErrorMapper.MapExceptionToStatusCode(exception);
-    var (title, typeUri) = ErrorMapper.MapExceptionToResponse(exception);
+    (string? title, string? typeUri) = ErrorMapper.MapExceptionToResponse(exception);
 
     httpContext.Response.StatusCode = statusCode;
     httpContext.Response.ContentType = "application/problem+json";
 
-    var problemDetails = CreateProblemDetails(
-        statusCode,
-        title,
-        typeUri,
-        httpContext);
+    ProblemDetails problemDetails = CreateProblemDetails(
+    statusCode,
+    title,
+    typeUri,
+    httpContext);
 
     await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 

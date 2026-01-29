@@ -12,7 +12,7 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
       DynamicParameters parameters = new();
       parameters.Add("Data", data, DbType.String, ParameterDirection.Input);
 
-      using System.Data.IDbConnection connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
+      using IDbConnection connection = await connectionFactory.CreateOpenConnectionAsync(cancellationToken);
 
       _ = await connection.ExecuteAsync(
           "AddDummyData",

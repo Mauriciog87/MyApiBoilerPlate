@@ -2,12 +2,12 @@ using FluentValidation;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
 {
-    public sealed class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
+  public sealed class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
+  {
+    public DeleteUserCommandValidator()
     {
-        public DeleteUserCommandValidator()
-        {
-            RuleFor(x => x.UserId)
-                .GreaterThan(0).WithMessage("User ID must be greater than 0.");
-        }
+      RuleFor(x => x.UserId)
+          .GreaterThan(0).WithMessage("User ID must be greater than 0.");
     }
+  }
 }

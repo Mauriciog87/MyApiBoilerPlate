@@ -18,7 +18,7 @@ namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
             PagedResult<User> users = await userRepository
                 .GetAllUsers(request.Page, request.PageSize, request.SortBy, request.SortDescending, cancellationToken);
 
-            var userResponses = users.Data.Select(mapper.Map<UserResponse>);
+            IEnumerable<UserResponse> userResponses = users.Data.Select(mapper.Map<UserResponse>);
 
             return new PagedResult<UserResponse>(
                 userResponses,

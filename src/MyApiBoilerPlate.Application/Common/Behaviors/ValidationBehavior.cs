@@ -20,38 +20,38 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
     where TRequest : IRequest<TResponse>
     where TResponse : IErrorOr
 {
-    private readonly IValidator<TRequest>? _validator;
+  private readonly IValidator<TRequest>? _validator;
 
-    public ValidationBehavior(IValidator<TRequest>? validator = null)
-    {
-        _validator = validator;
-    }
+  public ValidationBehavior(IValidator<TRequest>? validator = null)
+  {
+    _validator = validator;
+  }
 
-    public async ValueTask<TResponse> Handle(
-        TRequest message,
-        MessageHandlerDelegate<TRequest, TResponse> next,
-        CancellationToken cancellationToken
-    )
-    {
-        if (_validator is null)
-            return await next(message, cancellationToken);
+  public async ValueTask<TResponse> Handle(
+      TRequest message,
+      MessageHandlerDelegate<TRequest, TResponse> next,
+      CancellationToken cancellationToken
+  )
+  {
+    if (_validator is null)
+      return await next(message, cancellationToken);
 
-        ValidationResult validationResult = await _validator.ValidateAsync(message, cancellationToken);
+    ValidationResult validationResult = await _validator.ValidateAsync(message, cancellationToken);
 
-        if (validationResult.IsValid)
-            return await next(message, cancellationToken);
+    if (validationResult.IsValid)
+      return await next(message, cancellationToken);
 
-        List<ErrorOr.Error> errors = validationResult.Errors
-            .ConvertAll(error => ErrorOr.Error.Validation(
-                code: error.ErrorCode,
-                description: error.ErrorMessage
-            ));
+    List<Error> errors = validationResult.Errors
+        .ConvertAll(error => Error.Validation(
+            code: error.ErrorCode,
+            description: error.ErrorMessage
+        ));
 
-        // NOTE: The use of (dynamic) here is the official pattern recommended by the ErrorOr library
-        // for generic pipeline behaviors. Since TResponse is constrained to IErrorOr but we don't know
-        // the concrete ErrorOr<T> type at compile time, we use dynamic to leverage the implicit
-        // conversion from List<Error> to ErrorOr<T> that ErrorOr provides.
-        // See: https://github.com/amantinband/error-or#validation-behavior-with-mediatr-and-fluentvalidation
-        return (dynamic)errors;
-    }
+    // NOTE: The use of (dynamic) here is the official pattern recommended by the ErrorOr library
+    // for generic pipeline behaviors. Since TResponse is constrained to IErrorOr but we don't know
+    // the concrete ErrorOr<T> type at compile time, we use dynamic to leverage the implicit
+    // conversion from List<Error> to ErrorOr<T> that ErrorOr provides.
+    // See: https://github.com/amantinband/error-or#validation-behavior-with-mediatr-and-fluentvalidation
+    return (dynamic)errors;
+  }
 }

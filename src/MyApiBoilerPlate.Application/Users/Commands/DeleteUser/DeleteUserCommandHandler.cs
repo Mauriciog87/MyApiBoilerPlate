@@ -1,6 +1,7 @@
 using ErrorOr;
 using Mediator;
 using MyApiBoilerPlate.Application.Common.Interfaces.Repositories;
+using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
 {
@@ -9,7 +10,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.DeleteUser
   {
     public async ValueTask<ErrorOr<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-      var existingUser = await userRepository.GetUserById(request.UserId, cancellationToken);
+      User? existingUser = await userRepository.GetUserById(request.UserId, cancellationToken);
 
       if (existingUser is null)
       {

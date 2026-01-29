@@ -25,6 +25,7 @@ namespace MyApiBoilerPlate.Application.Users.Commands.CreateUser
               request.LastName,
               request.Email,
               request.PhoneNumber,
+              "INITIAL_PASSWORD_NOT_SET",
               request.DateOfBirth
             );
 

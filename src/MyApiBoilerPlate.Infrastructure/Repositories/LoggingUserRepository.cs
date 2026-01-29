@@ -16,7 +16,7 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
     public async Task<User> CreateUser(User user, CancellationToken cancellationToken)
     {
       logger.LogInformation("[sp_InsertUser] Executing - Email: {Email}", user.Email);
-      var result = await innerRepository.CreateUser(user, cancellationToken);
+      User result = await innerRepository.CreateUser(user, cancellationToken);
       logger.LogInformation("[sp_InsertUser] Completed - UserId: {UserId}", result.UserId);
       return result;
     }
@@ -38,8 +38,16 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
     public async Task<User?> GetUserById(int userId, CancellationToken cancellationToken)
     {
       logger.LogInformation("[sp_GetUserById] Executing - UserId: {UserId}", userId);
-      var result = await innerRepository.GetUserById(userId, cancellationToken);
+      User? result = await innerRepository.GetUserById(userId, cancellationToken);
       logger.LogInformation("[sp_GetUserById] Completed - Found: {Found}", result is not null);
+      return result;
+    }
+
+    public async Task<User?> GetUserByEmail(string email, CancellationToken cancellationToken)
+    {
+      logger.LogInformation("[sp_GetUserByEmail] Executing - Email: {Email}", email);
+      User? result = await innerRepository.GetUserByEmail(email, cancellationToken);
+      logger.LogInformation("[sp_GetUserByEmail] Completed - Found: {Found}", result is not null);
       return result;
     }
 
@@ -53,20 +61,20 @@ namespace MyApiBoilerPlate.Infrastructure.Repositories
       logger.LogInformation(
         "[sp_GetAllUsersPaginated] Executing - Page: {PageNumber}/{PageSize}",
         pageNumber, pageSize);
-      
-      var result = await innerRepository.GetAllUsers(pageNumber, pageSize, sortBy, sortDescending, cancellationToken);
-      
+
+      PagedResult<User> result = await innerRepository.GetAllUsers(pageNumber, pageSize, sortBy, sortDescending, cancellationToken);
+
       logger.LogInformation(
         "[sp_GetAllUsersPaginated] Completed - TotalRecords: {TotalRecords}",
         result.TotalRecords);
-      
+
       return result;
     }
 
     public async Task<bool> CheckIfUserExists(string email, CancellationToken cancellationToken)
     {
       logger.LogInformation("[sp_CheckEmailExists] Executing - Email: {Email}", email);
-      var result = await innerRepository.CheckIfUserExists(email, cancellationToken);
+      bool result = await innerRepository.CheckIfUserExists(email, cancellationToken);
       logger.LogInformation("[sp_CheckEmailExists] Completed - Exists: {Exists}", result);
       return result;
     }
