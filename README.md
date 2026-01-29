@@ -25,7 +25,7 @@ This solution follows **Clean Architecture** principles with clear separation of
 ├── MyApiBoilerPlate.Application  # 💼 Business Logic Layer
 ├── MyApiBoilerPlate.Domain       # 🏛️ Core Domain Layer
 ├── MyApiBoilerPlate.Infrastructure # 🔧 Data Access Layer
-└── MyApiBoilerPlate.Requests     # 📝 Request DTOs Layer
+└── MyApiBoilerPlate.Requests     # 📝 Request DTOs (Shared)
 ```
 
 ## ✨ Features
@@ -41,6 +41,8 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **ErrorOr** functional error handling
 - **Pipeline Behaviors** for cross-cutting concerns
 - **Repository pattern** with clean interfaces
+- **Clean IDs** - Redundant GUIDs removed in favor of strong integer IDs
+- **Password Hashing** - Secure user authentication foundation
 - **Response DTOs** to protect domain entities
 
 ### 🔧 **Key Libraries**
@@ -80,6 +82,8 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **PagedResult<T>** - Proper pagination model with metadata
 - **High-Performance Logging** - Source Generators for zero-allocation logging
 - **Enhanced Observability** - TraceId, timestamps, and structured error responses
+- **Mapster Integration** - High-performance automated mapping
+- **Consolidated Requests** - Centralized project for all API request DTOs
 - **Production Security** - Sensitive error details hidden in production
 - **Clean Code** - Follows SOLID principles and best practices
 
@@ -414,7 +418,7 @@ public record UpdateUserCommand(
     string PhoneNumber,
     DateTime DateOfBirth,
     bool IsActive
-) : IRequest<ErrorOr<Success>>;
+) : IRequest<ErrorOr<bool>>;
 ```
 
 #### DeleteUserCommand
@@ -628,4 +632,4 @@ For questions or support, please open an issue in the GitHub repository.
 
 **Built with ❤️ using .NET 10**
 
-*Last updated: January 20, 2026*
+*Last updated: January 28, 2026*
