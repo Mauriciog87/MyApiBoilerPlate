@@ -1,9 +1,9 @@
 CREATE TABLE users (
     user_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(MAX) NOT NULL,
     phone_number VARCHAR(20),
     date_of_birth DATETIME NULL,
     created_at DATETIME DEFAULT GETDATE(),
@@ -13,7 +13,6 @@ CREATE TABLE users (
 
 CREATE TABLE user_roles (
     role_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     role_name VARCHAR(50) UNIQUE NOT NULL,
     description VARCHAR(255),
     created_at DATETIME DEFAULT GETDATE()
@@ -30,7 +29,6 @@ CREATE TABLE user_role_assignments (
 
 CREATE TABLE medical_specialties (
     specialty_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     specialty_name VARCHAR(100) UNIQUE NOT NULL,
     description VARCHAR(255),
     created_at DATETIME DEFAULT GETDATE()
@@ -38,7 +36,6 @@ CREATE TABLE medical_specialties (
 
 CREATE TABLE doctors (
     doctor_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     user_id INT UNIQUE NOT NULL,
     license_number VARCHAR(50) UNIQUE NOT NULL,
     specialty_id INT NOT NULL,
@@ -51,7 +48,6 @@ CREATE TABLE doctors (
 
 CREATE TABLE patients (
     patient_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     user_id INT UNIQUE NOT NULL,
     medical_record_number VARCHAR(50) UNIQUE NOT NULL,
     insurance_number VARCHAR(50),
@@ -70,7 +66,6 @@ CREATE TABLE appointment_statuses (
 
 CREATE TABLE appointments (
     appointment_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     patient_id INT NOT NULL,
     doctor_id INT NOT NULL,
     appointment_date DATETIME NOT NULL,
@@ -87,7 +82,6 @@ CREATE TABLE appointments (
 
 CREATE TABLE doctor_schedules (
     schedule_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     doctor_id INT NOT NULL,
     schedule_date DATETIME NOT NULL,
     duration_in_minutes INT NULL,
@@ -99,7 +93,6 @@ CREATE TABLE doctor_schedules (
 
 CREATE TABLE doctor_time_off (
     time_off_id INT IDENTITY(1,1) PRIMARY KEY,
-    id uniqueidentifier,
     doctor_id INT NOT NULL,
     start_datetime DATETIME NOT NULL,
     end_datetime DATETIME NOT NULL,
@@ -133,10 +126,10 @@ CREATE INDEX IX_users_email ON users(email);
 GO
 
 CREATE PROCEDURE sp_InsertUser
-    @Id uniqueidentifier,
     @FirstName VARCHAR(100),
     @LastName VARCHAR(100),
     @Email VARCHAR(255),
+    @PasswordHash VARCHAR(MAX),
     @PhoneNumber VARCHAR(20) = NULL,
     @DateOfBirth DATETIME = NULL,
     @IsActive BIT = 1
@@ -155,10 +148,10 @@ BEGIN
         DECLARE @Now DATETIME = GETDATE();
 
         INSERT INTO [users] (
-            [id],
             [first_name],
             [last_name],
             [email],
+            [password_hash],
             [phone_number],
             [date_of_birth],
             [created_at],
@@ -166,10 +159,10 @@ BEGIN
             [is_active]
         )
         VALUES (
-            @Id,
             @FirstName,
             @LastName,
             @Email,
+            @PasswordHash,
             @PhoneNumber,
             @DateOfBirth,
             @Now,
@@ -181,7 +174,6 @@ BEGIN
         
         SELECT 
             [user_id] AS UserId,
-            [id] AS Id,
             [first_name] AS FirstName,
             [last_name] AS LastName,
             [email] AS Email,
@@ -329,7 +321,6 @@ BEGIN
         
         SELECT 
             [user_id] AS UserId,
-            [id] AS Id,
             [first_name] AS FirstName,
             [last_name] AS LastName,
             [email] AS Email,
@@ -382,13 +373,12 @@ BEGIN
     DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
     DECLARE @OrderClause NVARCHAR(100);
     
-    IF @SortBy NOT IN ('UserId', 'Id', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'CreatedAt', 'UpdatedAt', 'IsActive')
+    IF @SortBy NOT IN ('UserId', 'FirstName', 'LastName', 'Email', 'PhoneNumber', 'DateOfBirth', 'CreatedAt', 'UpdatedAt', 'IsActive')
         SET @SortBy = 'CreatedAt';
     
     DECLARE @ColumnName NVARCHAR(50) = 
         CASE @SortBy
             WHEN 'UserId' THEN 'user_id'
-            WHEN 'Id' THEN 'id'
             WHEN 'FirstName' THEN 'first_name'
             WHEN 'LastName' THEN 'last_name'
             WHEN 'Email' THEN 'email'
@@ -404,7 +394,6 @@ BEGIN
     
     DECLARE @SQL NVARCHAR(MAX) = '
     SELECT [user_id] AS UserId
-          ,[id] AS Id
           ,[first_name] AS FirstName
           ,[last_name] AS LastName
           ,[email] AS Email
