@@ -189,9 +189,11 @@ MyApiBoilerPlate/
 │   │   ├── DependencyInjection.cs       # Infrastructure layer DI setup
 │   │   └── MyApiBoilerPlate.Infrastructure.csproj
 │   ├── MyApiBoilerPlate.Requests/
-│   │   └── Users/
-│   │       ├── CreateUserRequest.cs     # Create user request DTO
-│   │       └── UpdateUserRequest.cs     # Update user request DTO
+│   │   ├── Users/
+│   │   │   ├── CreateUserRequest.cs     # Create user request DTO
+│   │   │   └── UpdateUserRequest.cs     # Update user request DTO
+│   │   └── Authentication/
+│   │       └── LoginRequest.cs          # [NEW] Login request DTO
 │   └── MyApiBoilerPlate.sln             # Solution file
 ├── DBScripts/
 │   └── DBCreation/
@@ -546,11 +548,12 @@ This project implements best practices from:
 - ✅ **Health Checks** - Liveness (`/health`) and Readiness (`/health/ready`) endpoints
 - ✅ **Rate Limiting** - Global fixed window policy for API protection
 - ✅ **Docker Support** - Production-ready containerization
+- ✅ **Authentication & Authorization** - JWT Bearer Token implementation
+- ✅ **Password Hashing** - Secure multi-purpose password hashing service
 
 ### ❌ Not Yet Implemented
 - ❌ **Unit Tests** - Test suite for validators and handlers
 - ❌ **Integration Tests** - API endpoint testing
-- ❌ **Authentication/Authorization** - JWT or OAuth2 support
 - ❌ **Caching** - Response or data caching strategy
 - ❌ **Specification Pattern** - Business rule aggregation
 - ❌ **Domain Events** - Event-driven architecture support
@@ -565,8 +568,8 @@ This project implements best practices from:
 - [ ] Code coverage reporting
 
 ### Phase 2: Security & Performance (High Priority)
-- [ ] JWT Authentication implementation
-- [ ] Role-based authorization policies
+- [x] JWT Authentication implementation
+- [x] Role-based authorization policies
 - [ ] Caching strategy (in-memory and distributed)
 - [ ] Response compression
 
