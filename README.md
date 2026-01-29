@@ -33,6 +33,7 @@ This solution follows **Clean Architecture** principles with clear separation of
 ### 🚀 **Modern .NET Stack**
 - **.NET 10** with **C# 14.0**
 - **Controllers-based** architecture
+- **JWT Bearer** Authentication & Authorization
 - **Nullable reference types** enabled
 - **ImplicitUsings** for cleaner code
 
@@ -82,6 +83,8 @@ This solution follows **Clean Architecture** principles with clear separation of
 - **PagedResult<T>** - Proper pagination model with metadata
 - **High-Performance Logging** - Source Generators for zero-allocation logging
 - **Enhanced Observability** - TraceId, timestamps, and structured error responses
+- **JWT Authentication** - Secure Bearer token implementation
+- **Password Hashing** - Secure multi-purpose BCrypt-based hashing
 - **Mapster Integration** - High-performance automated mapping
 - **Consolidated Requests** - Centralized project for all API request DTOs
 - **Production Security** - Sensitive error details hidden in production
@@ -224,8 +227,8 @@ MyApiBoilerPlate/
 - External services integration
 
 #### **Presentation Layer** 🎯
-- Controllers
-- Exception handlers
+- Controllers with Bearer Authentication
+- Exception handlers (RFC 7807)
 - Request/Response mapping
 
 ### Key Patterns
@@ -405,7 +408,8 @@ public record CreateUserCommand(
     string LastName,
     string Email,
     string PhoneNumber,
-    DateTime DateOfBirth
+    DateTime DateOfBirth,
+    bool IsActive
 ) : IRequest<ErrorOr<UserCreatedResult>>;
 ```
 
