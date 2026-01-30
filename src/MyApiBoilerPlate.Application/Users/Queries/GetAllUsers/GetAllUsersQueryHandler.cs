@@ -8,26 +8,26 @@ using MyApiBoilerPlate.Domain.Entities;
 
 namespace MyApiBoilerPlate.Application.Users.Queries.GetAllUsers
 {
-    public sealed class GetAllUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
-        : IRequestHandler<GetAllUsersQuery, ErrorOr<PagedResult<UserResponse>>>
+  public sealed class GetAllUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
+      : IRequestHandler<GetAllUsersQuery, ErrorOr<PagedResult<UserResponse>>>
+  {
+    public async ValueTask<ErrorOr<PagedResult<UserResponse>>> Handle(
+        GetAllUsersQuery request,
+        CancellationToken cancellationToken)
     {
-        public async ValueTask<ErrorOr<PagedResult<UserResponse>>> Handle(
-            GetAllUsersQuery request,
-            CancellationToken cancellationToken)
-        {
-            PagedResult<User> users = await userRepository
-                .GetAllUsers(request.Page, request.PageSize, request.SortBy, request.SortDescending, cancellationToken);
+      PagedResult<User> users = await userRepository
+          .GetAllUsers(request.Page, request.PageSize, request.SortBy, request.SortDescending, cancellationToken);
 
-            IEnumerable<UserResponse> userResponses = users.Data.Select(mapper.Map<UserResponse>);
+      IEnumerable<UserResponse> userResponses = users.Data.Select(mapper.Map<UserResponse>);
 
-            return new PagedResult<UserResponse>(
-                userResponses,
-                users.PageSize,
-                users.PageNumber,
-                users.TotalRecords,
-                users.OrderDescending,
-                users.OrderBy
-            );
-        }
+      return new PagedResult<UserResponse>(
+          userResponses,
+          users.PageSize,
+          users.PageNumber,
+          users.TotalRecords,
+          users.OrderDescending,
+          users.OrderBy
+      );
     }
+  }
 }
