@@ -411,4 +411,97 @@ BEGIN
     EXEC sp_executesql @SQL;
 
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-END
+END;
+GO
+
+CREATE PROCEDURE sp_GetUserById
+    @UserId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+    
+    BEGIN TRY
+        SELECT 
+            [user_id] AS UserId,
+            [first_name] AS FirstName,
+            [last_name] AS LastName,
+            [email] AS Email,
+            [password_hash] AS PasswordHash,
+            [phone_number] AS PhoneNumber,
+            [date_of_birth] AS DateOfBirth,
+            [created_at] AS CreatedAt,
+            [updated_at] AS UpdatedAt,
+            [is_active] AS IsActive
+        FROM [users] 
+        WHERE [user_id] = @UserId;
+        
+    END TRY
+    BEGIN CATCH
+        SELECT 
+            @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE();
+        
+        SELECT 
+            'ERROR' AS Status,
+            @ErrorMessage AS ErrorMessage,
+            @ErrorSeverity AS ErrorSeverity,
+            @ErrorState AS ErrorState,
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_PROCEDURE() AS ErrorProcedure,
+            ERROR_LINE() AS ErrorLine;
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO
+
+CREATE PROCEDURE sp_GetUserByEmail
+    @Email VARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @ErrorSeverity INT;
+    DECLARE @ErrorState INT;
+    
+    BEGIN TRY
+        SELECT 
+            [user_id] AS UserId,
+            [first_name] AS FirstName,
+            [last_name] AS LastName,
+            [email] AS Email,
+            [password_hash] AS PasswordHash,
+            [phone_number] AS PhoneNumber,
+            [date_of_birth] AS DateOfBirth,
+            [created_at] AS CreatedAt,
+            [updated_at] AS UpdatedAt,
+            [is_active] AS IsActive
+        FROM [users] 
+        WHERE [email] = @Email;
+        
+    END TRY
+    BEGIN CATCH
+        SELECT 
+            @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE();
+        
+        SELECT 
+            'ERROR' AS Status,
+            @ErrorMessage AS ErrorMessage,
+            @ErrorSeverity AS ErrorSeverity,
+            @ErrorState AS ErrorState,
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_PROCEDURE() AS ErrorProcedure,
+            ERROR_LINE() AS ErrorLine;
+        
+        RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+    END CATCH
+END;
+GO
